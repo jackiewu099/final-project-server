@@ -26,11 +26,11 @@ const Student = db.define("student", {
   email: {
     type: Sequelize.STRING,
     allowNull: false,
-    unique: true,
+    unique: { msg: "That email is already in use." },
     validate: {
       notEmpty: true,
-      isEmail: true, // built-in Sequelize email validation
-    },
+      isEmail: { msg: "Please enter a valid email address." }
+    }
   },
 
   imageUrl: {
