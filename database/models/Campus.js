@@ -20,7 +20,13 @@ const Campus = db.define("campus", {
 
   description: {
     type: Sequelize.STRING,
-  }
+  },
+
+  imageURL: {
+    type: Sequelize.STRING,
+    defaultValue: 'https://www.cnu.org/sites/default/files/styles/public_square_feature_image/public/BostonCollege1.jpg?itok=iKc35HST',
+  },
+
 });
 
 // Export the campus model
