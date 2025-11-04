@@ -28,18 +28,30 @@ const seedDB = async () => {
 	
 	// Create a new student for a campus
 	const dummy_student = await Student.create({
-		firstname: "Joe",
-      lastname: "Smith",
+		firstName: "Joe",
+      	lastName: "Smith",
+		email: "joesmith62@gmail.com",
+		gpa: 3.5,
 	});
 	// Create a new student for a campus
 	const dummy_student2 = await Student.create({
-		firstname: "Mary",
-      lastname: "Johnson",
+		firstName: "Mary",
+      	lastName: "Johnson",
+		email: "maryjohnson1@gmail.com",
+		gpa: 3.8,
 	});
+
+	const dummy_student3 = await Student.create({
+		firstName: "James",
+	  	lastName: "Williams",
+		email: "jameswilliams45@gmail.com",
+		gpa: 3.2,
+	})
 
 	// Add students to campuses
 	await dummy_student.setCampus(dummy_campus);
 	await dummy_student2.setCampus(dummy_campus2);
+	await dummy_student3.setCampus(dummy_campus3);
 }
 
 // Export the database seeding function
