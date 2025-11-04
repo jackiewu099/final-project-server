@@ -40,11 +40,29 @@ router.get('/:id', ash(async(req, res) => {
 }));
 
 /* ADD NEW STUDENT */
-router.post('/', function(req, res, next) {
-  Student.create(req.body)
-    .then(createdStudent => res.status(200).json(createdStudent))
-    .catch(err => next(err));
+// router.post('/', function(req, res, next) {
+//   Student.create(req.body)
+//     .then(createdStudent => res.status(200).json(createdStudent))
+//     .catch(err => next(err));
+// });
+
+router.post('/', async (req, res, next) => {
+  try {
+    // Remove empty imageUrl so default applies
+    if (req.body.imageUrl === '') delete req.body.imageUrl;
+
+    const newStudent = await Student.create(req.body);
+    res.status(201).json(newStudent);
+  } catch (err) {
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+      // Format readable error messages
+      const messages = err.errors.map(e => e.message);
+      return res.status(400).json({ errors: messages });
+    }
+    next(err); // for unexpected errors
+  }
 });
+
 
 /* DELETE STUDENT */
 router.delete('/:id', function(req, res, next) {

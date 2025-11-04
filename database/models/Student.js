@@ -11,7 +11,7 @@ const Student = db.define("student", {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
-      notEmpty: true, // prevents empty string
+      notEmpty: { msg: "First name required" },
     },
   },
 
@@ -19,18 +19,18 @@ const Student = db.define("student", {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
-      notEmpty: true,
+      notEmpty: { msg: "Last name required" },
     },
   },
 
   email: {
     type: Sequelize.STRING,
     allowNull: false,
-    unique: true,
+    unique: { msg: "That email is already in use." },
     validate: {
       notEmpty: true,
-      isEmail: true, // built-in Sequelize email validation
-    },
+      isEmail: { msg: "Please enter a valid email address." }
+    }
   },
 
   imageUrl: {
