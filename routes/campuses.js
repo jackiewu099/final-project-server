@@ -13,17 +13,6 @@ const { Student, Campus } = require('../database/models');
 // Import a middleware to replace "try and catch" for request handler, for a concise coding (fewer lines of code)
 const ash = require('express-async-handler');
 
-/* GET ALL CAMPUSES: async/await using "try-catch" */
-// router.get('/', async (req, res, next) => {
-//   try {
-//     let campuses = await Campus.findAll({include: [Student]});
-//     res.status(200).json(campuses);
-//   } 
-//   catch(err) {
-//     next(err);
-//   }
-// });
-
 /* GET ALL CAMPUSES */
 router.get('/', ash(async(req, res) => {
   let campuses = await Campus.findAll({include: [Student]});  // Get all campuses and their associated students
@@ -48,11 +37,6 @@ router.delete('/:id', ash(async(req, res) => {
 }));
 
 /* ADD NEW CAMPUS */
-// router.post('/', ash(async(req, res) => {
-//   const newCampus = await Campus.create(req.body);
-//   res.status(200).json(newCampus);  // Status code 200 OK - request succeeded
-// }));
-
 router.post('/', async (req, res, next) => {
   try {
     // Remove empty imageUrl so default applies

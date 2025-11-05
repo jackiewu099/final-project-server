@@ -13,17 +13,6 @@ const { Student, Campus } = require('../database/models');
 // Import a middleware to replace "try and catch" for request handler, for a concise coding (fewer lines of code)
 const ash = require('express-async-handler');
 
-/* GET ALL STUDENTS: async/await using "try-catch" */
-// router.get('/', async (req, res, next) => {
-//   try {
-//     let students = await Student.findAll({include: [Campus]});
-//     res.status(200).json(students);
-//   } 
-//   catch(err) {
-//     next(err);
-//   }
-// });
-
 /* GET ALL STUDENTS: async/await using express-async-handler (ash) */
 // Automatically catches any error and sends to Routing Error-Handling Middleware (app.js)
 // It is the same as using "try-catch" and calling next(error)
@@ -40,12 +29,6 @@ router.get('/:id', ash(async(req, res) => {
 }));
 
 /* ADD NEW STUDENT */
-// router.post('/', function(req, res, next) {
-//   Student.create(req.body)
-//     .then(createdStudent => res.status(200).json(createdStudent))
-//     .catch(err => next(err));
-// });
-
 router.post('/', async (req, res, next) => {
   try {
     // Remove empty imageUrl so default applies
