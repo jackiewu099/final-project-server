@@ -48,10 +48,27 @@ router.delete('/:id', ash(async(req, res) => {
 }));
 
 /* ADD NEW CAMPUS */
-router.post('/', ash(async(req, res) => {
-  let newCampus = await Campus.create(req.body);
-  res.status(200).json(newCampus);  // Status code 200 OK - request succeeded
-}));
+// router.post('/', ash(async(req, res) => {
+//   const newCampus = await Campus.create(req.body);
+//   res.status(200).json(newCampus);  // Status code 200 OK - request succeeded
+// }));
+
+router.post('/', async (req, res, next) => {
+  try {
+    // Remove empty imageUrl so default applies
+    if (req.body.imageUrl === '') delete req.body.imageUrl;
+
+    const newCampus = await Campus.create(req.body);
+    res.status(201).json(newCampus);
+  } catch (err) {
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+      // Format readable error messages
+      const messages = err.errors.map(e => e.message);
+      return res.status(400).json({ errors: messages });
+    }
+    next(err); // for unexpected errors
+  }
+});
 
 /* EDIT CAMPUS */
 router.put('/:id', ash(async(req, res) => {
