@@ -76,14 +76,26 @@ router.delete('/:id', function(req, res, next) {
 });
 
 /* EDIT STUDENT */
-router.put('/:id', ash(async(req, res) => {
-  await Student.update(req.body,
-        { where: {id: req.params.id} }
-  );
-  // Find student by Primary Key
-  let student = await Student.findByPk(req.params.id);
-  res.status(201).json(student);  // Status code 201 Created - successful creation of a resource
-}));
+router.put('/:id', async (req, res, next) => {
+  try {
+    // Remove empty imageUrl so default applies
+    if (req.body.imageUrl === '') delete req.body.imageUrl;
+
+    // Attempt to update the student
+    await Student.update(req.body, { where: { id: req.params.id } });
+
+    // Find the updated student
+    const student = await Student.findByPk(req.params.id);
+    res.status(200).json(student);  // Status 200 OK - successful update
+  } catch (err) {
+    // Handle Sequelize validation errors (required fields, unique constraints, etc.)
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+      const messages = err.errors.map(e => e.message);
+      return res.status(400).json({ errors: messages });
+    }
+    next(err);  // For unexpected errors
+  }
+});
 
 // Export router, so that it can be imported to construct the apiRouter (app.js)
 module.exports = router;
