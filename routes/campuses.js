@@ -71,16 +71,37 @@ router.post('/', async (req, res, next) => {
 });
 
 /* EDIT CAMPUS */
-router.put('/:id', ash(async(req, res) => {
-  await Campus.update(req.body, {
-    where: {
-      id: req.params.id
+// router.put('/:id', ash(async(req, res) => {
+//   await Campus.update(req.body, {
+//     where: {
+//       id: req.params.id
+//     }
+//   });
+//   // Find campus by Primary Key
+//   let campus = await Campus.findByPk(req.params.id, {include: [Student]});  // Get the campus and its associated students
+//   res.status(201).json(campus);  // Status code 201 Created - successful creation of a resource
+// }))
+
+router.put('/:id', async (req, res, next) => {
+  try {
+    // Remove empty imageUrl so default applies
+    if (req.body.imageUrl === '') delete req.body.imageUrl;
+
+    // Attempt to update the student
+    await Campus.update(req.body, { where: { id: req.params.id } });
+
+    // Find the updated student
+    const campus = await Campus.findByPk(req.params.id, {include: [Student]});
+    res.status(200).json(campus);  // Status 200 OK - successful update
+  } catch (err) {
+    // Handle Sequelize validation errors (required fields, unique constraints, etc.)
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+      const messages = err.errors.map(e => e.message);
+      return res.status(400).json({ errors: messages });
     }
-  });
-  // Find campus by Primary Key
-  let campus = await Campus.findByPk(req.params.id, {include: [Student]});  // Get the campus and its associated students
-  res.status(201).json(campus);  // Status code 201 Created - successful creation of a resource
-}))
+    next(err);  // For unexpected errors
+  }
+});
 
 // Export router, so that it can be imported to construct the apiRouter (app.js)
 module.exports = router;
